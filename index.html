@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0f8ff, #e0f7fa);
+            font-family: 'Georgia', serif;
+        }
+
+        .todo-form {
+            background: #e6f7ff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        input,
+        button {
+            margin: 0 5px;
+        }
+
+        input:focus,
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        button {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #00aaff;
+            transform: scale(1.05);
+        }
+
+        ol {
+            padding: 0;
+            list-style: none;
+        }
+
+        li {
+            background: #ffffff;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        li.done {
+            text-decoration: line-through;
+            color: #888;
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+        }
+
+        span {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .datehead,
+        .datesection {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .deleteButton {
+            color: red;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        .deleteButton:hover {
+            color: darkred;
+        }
+
+        .rightsection {
+            float: right;
+            display: flex;
+            align-items: center;
+        }
+
+        .rightsection button {
+            margin: 0 5px;
+            border-radius: 5px;
+            font-size: smaller;
+        }
+
+        @media (max-width: 570px) {
+            .datehead,
+            .datesection {
+                font-size: 10px;
+            }
+
+            .rightsection button {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="todo-form mt-2 d-flex justify-content-center container">
+        <input class="form-control form-control-sm" type="text" value="hello welcome" id="inputtext"
+            placeholder="Enter your Goal............" required>
+        <div id="targetdatetime1" class="" style="font-size: 11px;">
+            <div class="text-center">Target Date</div>
+            <input type="date" class="" id="targetdate">
+        </div>
+        <button type="button" class="btn btn-outline-success ms-1" id="addbtn"><b>Add</b></button>
+        <p id="result"></p>
+    </div>
+    <ol class="container" id="todolist"></ol>
+
+    <script>
+        const inputtxt = document.getElementById("inputtext");
+        const addbtn = document.getElementById("addbtn");
+        const todolist = document.getElementById("todolist");
+        const targetdate = document.getElementById("targetdate");
+        const d = new Date();
+
+        addbtn.addEventListener("click", function () {
+            const text = inputtxt.value;
+            const targetdate11 = targetdate.value;
+            const targetdate1 = new Date(targetdate11)
+
+            const [year, month, day] = targetdate11.split('-');
+            const targetdate2 = day + "-" + month + "-" + year;
+
+            if (text) {
+                const oneitem = document.createElement("div");
+                const todoitem = document.createElement("li");
+                const todop = document.createElement("span");
+                const todop1 = document.createElement("span"); // todop1 is the result
+                //content editable for task
+                todop.addEventListener("dblclick", () => {
+                    todop.contentEditable = true
+                })
+                todop.addEventListener('blur', () => {
+                    todop.contentEditable = false;
+                })
+                const deleteButton = document.createElement('span');
+                const donebtn = document.createElement('button');
+                const datehead = document.createElement("span");
+                const datesection = document.createElement("span");
+                const datesection1 = document.createElement("span");
+                const datesection3 = document.createElement("span");
+                const rightsection = document.createElement("div");
+                const dd = d.getDate();
+                const m = ('0' + (d.getMonth() + 1)).slice(-2);
+                const y = (d.getFullYear());
+                datesection1.innerHTML = "<b>Added:</b> " + dd + "-" + m + "-" + y;
+
+                donebtn.addEventListener("click", function () {
+                    if (donebtn.innerText == "Done") {
+                        const d = new Date();
+                        todop1.style.display = "flex";
+                        todop1.style.justifyContent = "center";
+                        donebtn.innerText = "NotDone";
+                        todoitem.classList.toggle("done");
+                        const ddd = new Date();
+                        const diff1 = targetdate1 - ddd
+                        var differenceDays = Math.ceil(diff1 / (1000 * 60 * 60 * 24));
+                        datesection.innerHTML = "<b>Done:</b> " + ddd.getDate() + "-" + ('0' + (ddd.getMonth() + 1)).slice(-2) + "-" + ddd.getFullYear();
+
+                        if (differenceDays > 0) {
+                            todop1.innerHTML = "Completed " + differenceDays + " days before";
+                        }
+                        else if (differenceDays < 0) {
+                            todop1.innerHTML = "Completed" + differenceDays + " days after";
+                        }
+                        else if (!targetdate11) {
+                            todop1.innerHTML = "You didn't enter target date";
+                        }
+                        else {
+                            todop1.innerHTML = "You completed your goal on your target date";
+                        }
+
+                    } else {
+                        todoitem.classList.toggle("done");
+                        donebtn.innerText = "Done";
+                        datesection.innerHTML = "";
+                        datesection.innerHTML = "<b>LastDone:</b> " + d.getDate() + "-" + ('0' + (d.getMonth() + 1)).slice(-2) + "-" + ('0' + (d.getFullYear())).slice(-2);
+                        todop1.innerHTML = "You marked as not done"
+                    }
+                });
+
+                window.addEventListener("resize", function () {
+                    if (window.innerWidth <= 570) {
+                        datehead.style.fontSize = "10px";
+                        donebtn.style.borderRadius = "5px";
+                        donebtn.style.fontSize = "2px";
+                        todoitem.style.padding = "px";
+                        todoitem.style.margin = "0px 0px 0px 0px";
+                        rightsection.style.cssFloat = "right";
+                        rightsection.style.display = "flex";
+                        oneitem.style.backgroundColor = "rgba(220, 220, 220, 0.5)";
+                        datehead.style.margin = "0px 0px 0px 0px";
+                        datehead.style.borderRadius = "5px solid";
+                        datehead.style.position = "static";
+                        datehead.style.display = "flex";
+                        datehead.style.justifyContent = "space-around";
+                        todop.style.fontSize = "13px";
+                        todop.style.fontWeight = "bolder";
+                        todop.style.fontFamily = "Georgia, serif";
+                        oneitem.style.margin = "10px 0px 0px 2px"
+                        oneitem.style.borderRadius = "10px"
+
+                        todop.innerHTML = text;
+                        todop1.style.fontSize = "10px";
+                        donebtn.innerText = "Done"
+                        donebtn.style.fontSize = "9px"
+                        deleteButton.innerText = 'x';
+                        deleteButton.style.margin = '0px 0px 0px 15px';
+                        deleteButton.style.color = "red"
+                        datehead.style.backgroundColor = "grey"
+                        datehead.style.color = "blue"
+
+                    } else {
+                        datehead.style.fontSize = "15px";
+                        todop1.style.fontSize = "15px";
+                    }
+                });
+
+                todoitem.appendChild(todop);
+                todoitem.appendChild(rightsection);
+                rightsection.appendChild(donebtn);
+                rightsection.appendChild(deleteButton);
+                oneitem.appendChild(todoitem);
+                oneitem.appendChild(todop1);
+                todolist.appendChild(oneitem);
+                oneitem.appendChild(datehead);
+                datehead.appendChild(datesection1);
+                datehead.appendChild(datesection3);
+                datehead.appendChild(datesection);
+
+                donebtn.style.borderRadius = "5px";
+                todoitem.style.padding = "10px";
+                todoitem.style.color = "";
+                todoitem.style.margin = "0px 0px 0px 10px";
+                rightsection.style.cssFloat = "right";
+                oneitem.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
+                datehead.style.margin = "px 10px 0px 10px";
+                datehead.style.position = "static";
+                datehead.style.display = "flex";
+                datehead.style.justifyContent = "space-evenly";
+                todop.style.fontSize = "16px";
+                todop.style.fontWeight = "bolder";
+                todop.style.fontFamily = "Georgia, serif";
+                oneitem.style.margin = "10px 0px 0px 0px"
+                oneitem.style.borderRadius = "10px"
+
+                inputtxt.value = "";
+                targetdate.value = "";
+                todop.innerHTML = text;
+                datesection3.innerHTML = "<b>Target:</b> " + targetdate2;
+                //content editable for target date
+                datesection3.addEventListener("dblclick", () => {
+                    datesection3.contentEditable = true
+                })
+                datesection3.addEventListener('blur', () => {
+                    datesection3.contentEditable = 'false';
+                })
+                donebtn.innerText = "Done"
+                deleteButton.innerText = 'X';
+                deleteButton.className = 'deleteButton';
+                datehead.className = 'datehead';
+
+                deleteButton.addEventListener('click', function () {
+                    todolist.removeChild(oneitem);
+                    todolist.removeChild(datehead);
+                });
+            }
+        })
+    </script>
+</body>
+
+</html>
